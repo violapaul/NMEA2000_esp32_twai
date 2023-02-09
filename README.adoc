@@ -1,11 +1,32 @@
-= NMEA2000_esp32 library for ESP32 boards =
+= NMEA2000_esp32 library for ESP32 boards with TWAI CAN driver =
+
+This is refactored https://github.com/ttlappalainen/NMEA2000_esp32[NMEA2000_esp32] library using TWAI CAN driver. Main reason for this  rewrite is that original library was not supported by newer ESP32 C3.
+
+Only one change needed in comparison to original library - to add message listener as a separate task:
+
+    xTaskCreatePinnedToCore(
+        receiveNmeaMessage,    /* Function to implement the task */
+        "Task3",               /* Name of the task */
+        4096,                  /* Stack size in words */
+        NULL,                  /* Task input parameter */
+        2 | portPRIVILEGE_BIT, /* Priority of the task */
+        NULL,                  /* Task handle. */
+        0);                    /* Core where the task should run */
+
+
+
+    void receiveNmeaMessage(void *parameter) {
+        while (true) {
+            ESP32_CAN_read_frame();
+        }
+    }
 
 Inherited object for use NMEA2000 library for ESP32 Boards.
 See also https://github.com/ttlappalainen/NMEA2000[NMEA2000] library.
 
 To use this library, you will also need NMEA2000 library.
 
-The library defines as default Tx pin to GPIO 16 and Rx pint to GPIO 4. You can 
+The library defines as default Tx pin to GPIO 16 and Rx pint to GPIO 4. You can
 change these with defines:
 
   #define ESP32_CAN_TX_PIN GPIO_NUM_16
