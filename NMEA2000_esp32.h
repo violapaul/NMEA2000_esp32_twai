@@ -6,14 +6,26 @@
 #include "driver/gpio.h"
 #include "NMEA2000.h"
 #include "N2kMsg.h"
-#include "ESP32_CAN_def.h"
 
 #ifndef ESP32_CAN_TX_PIN
-#define ESP32_CAN_TX_PIN GPIO_NUM_16
+#define ESP32_CAN_TX_PIN GPIO_NUM_6
 #endif
 #ifndef ESP32_CAN_RX_PIN
-#define ESP32_CAN_RX_PIN GPIO_NUM_4
+#define ESP32_CAN_RX_PIN GPIO_NUM_7
 #endif
+#ifndef ESP32_TWAI_MODE
+#define ESP32_TWAI_MODE TWAI_MODE_NORMAL
+#endif
+
+typedef enum
+{
+  CAN_SPEED_100KBPS = 100,  /**< \brief CAN Node runs at 100kBit/s. */
+  CAN_SPEED_125KBPS = 125,  /**< \brief CAN Node runs at 125kBit/s. */
+  CAN_SPEED_250KBPS = 250,  /**< \brief CAN Node runs at 250kBit/s. */
+  CAN_SPEED_500KBPS = 500,  /**< \brief CAN Node runs at 500kBit/s. */
+  CAN_SPEED_800KBPS = 800,  /**< \brief CAN Node runs at 800kBit/s. */
+  CAN_SPEED_1000KBPS = 1000 /**< \brief CAN Node runs at 1000kBit/s. */
+} CAN_speed_t;
 
 class tNMEA2000_esp32 : public tNMEA2000
 {
