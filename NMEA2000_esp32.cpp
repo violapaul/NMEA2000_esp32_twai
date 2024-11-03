@@ -95,7 +95,7 @@ bool tNMEA2000_esp32::CANGetFrame(unsigned long &id, unsigned char &len, unsigne
   return HasFrame;
 }
 
-void tNMEA2000_esp32::CAN_read_frame()
+esp_err_t tNMEA2000_esp32::CAN_read_frame()
 {
   // Wait for message to be received
   twai_message_t message;
@@ -109,12 +109,16 @@ void tNMEA2000_esp32::CAN_read_frame()
   {
     Serial.printf("Failed to receive message - %s \n", esp_err_to_name(result));
   }
+  return result;
 }
 
 //*****************************************************************************
 void tNMEA2000_esp32::CAN_init()
 {
-  twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(ESP32_CAN_TX_PIN, ESP32_CAN_RX_PIN, TWAI_MODE_NO_ACK);
+  // Fixed a bug which used the preprocessor defined pins instead of the class instance variables.
+  // The problem is that this was determined at compile time, which was before the user code was
+  // built.  So there was not way to configure the pins to anything other than the preprocessor defaults.
+  twai_general_config_t g_config = TWAI_GENERAL_CONFIG_DEFAULT(this->TxPin, this->RxPin, TWAI_MODE_NO_ACK);
   g_config.tx_queue_len = 20;
   twai_timing_config_t t_config = TWAI_TIMING_CONFIG_250KBITS();
   twai_filter_config_t f_config = TWAI_FILTER_CONFIG_ACCEPT_ALL();
@@ -131,7 +135,8 @@ void tNMEA2000_esp32::CAN_init()
   ESP_ERROR_CHECK(twai_reconfigure_alerts(TWAI_ALERT_ALL, NULL));
 }
 
-void ESP32_CAN_read_frame()
+
+esp_err_t ESP32_CAN_read_frame()
 {
-  pNMEA2000_esp32->CAN_read_frame();
+  return pNMEA2000_esp32->CAN_read_frame();
 }
