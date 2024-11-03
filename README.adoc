@@ -1,5 +1,12 @@
 = NMEA2000_esp32 library for ESP32 boards with TWAI CAN driver =
 
+(Fork of a fork of a fork...)
+
+TLDR:
+- Verified this works for S3 chips as well. 
+- It did not compile well.  Code would not pickup the preprocessor PIN directives, which are defined at compile time of this library which is before the user code was built.  See below.
+
+
 This is refactored https://github.com/ttlappalainen/NMEA2000_esp32[NMEA2000_esp32] library using TWAI CAN driver. Main reason for this  rewrite is that original library was not supported by newer ESP32 C3.
 
 Only one change needed in comparison to original library - to add message listener as a separate task:
@@ -32,7 +39,7 @@ change these with defines:
   #define ESP32_CAN_TX_PIN GPIO_NUM_16
   #define ESP32_CAN_RX_PIN GPIO_NUM_4
 
-before including NMEA2000_CAN.h or NMEA2000_esp32.h
+before including NMEA2000_CAN.h or NMEA2000_esp32.h  (this was the bit that did not work).
 
 == Thanks ==
 
